@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Territorial [CN] · 视差动画版</title>
+    <!-- GSAP + ScrollTrigger (苹果同款动画引擎) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0b0e14;
+            color: #f0f4fa;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 中国风背景纹理 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(230, 57, 70, 0.08) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.08) 0%, transparent 40%),
+                repeating-linear-gradient(45deg, rgba(255, 215, 0, 0.02) 0px, rgba(255, 215, 0, 0.02) 2px, transparent 2px, transparent 10px);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 导航栏 - 毛玻璃 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 1.2rem 2.5rem;
+            background: rgba(10, 15, 25, 0.75);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd966, #ff8c42, #e63946);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            color: #e63946;
+            margin-right: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: #e0e8f0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffd966, #e63946);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #ffd966;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 主要内容区 */
+        .content {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 2rem 80px;
+        }
+
+        /* Hero 区域 - 首屏大标题 */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 12vw, 6.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(145deg, #ffd966, #ff8c42, #e63946);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .hero p {
+            font-size: 1.8rem;
+            color: #a0b8d0;
+            max-width: 800px;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        /* 中国风装饰 - 祥云龙纹 (Base64 占位图，实际可替换为图片) */
+        .dragon-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.15"><path d="M100 30 L120 70 L170 75 L130 105 L145 155 L100 130 L55 155 L70 105 L30 75 L80 70 Z" fill="%23ffd966"/><circle cx="100" cy="100" r="10" fill="%23e63946"/></svg>');
+            background-size: 300px 300px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 图片容器 - 用于视差动画 */
+        .parallax-block {
+            position: relative;
+            width: 100%;
+            min-height: 600px;
+            margin: 8rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+        }
+
+        .parallax-image {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 40px 70px -20px rgba(0, 0, 0, 0.9);
+            position: relative;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: filter 0.3s ease;
+            filter: brightness(0.5) saturate(0.8);
+            transform-origin: center center;
+        }
+
+        .parallax-image.active {
+            filter: brightness(1.2) saturate(1.4) drop-shadow(0 0 25px rgba(255, 215, 0, 0.6));
+        }
+
+        .parallax-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            color: #ffd966;
+            font-weight: 600;
+            border-left: 4px solid #e63946;
+        }
+
+        .parallax-text {
+            flex: 1;
+            min-width: 300px;
+            padding: 2.5rem;
+            background: rgba(20, 30, 45, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 25px 50px -20px #000;
+            transform-origin: left center;
+        }
+
+        .parallax-text h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(120deg, #ffd966, #ff8c42);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .parallax-text p {
+            font-size: 1.3rem;
+            color: #d0e0f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .cn-badge {
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            background: rgba(230, 57, 70, 0.2);
+            border: 1px solid #e63946;
+            border-radius: 40px;
+            color: #ffd966;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        /* 长城地图展示区 - 旋转缩放特效 */
+        .greatwall-showcase {
+            position: relative;
+            width: 100%;
+            min-height: 700px;
+            margin: 10rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            perspective: 1500px;
+        }
+
+        .map-base {
+            width: 100%;
+            height: auto;
+            border-radius: 60px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
+            border: 3px solid rgba(255, 215, 0, 0.5);
+            display: block;
+            transition: transform 0.1s ease;
+            transform-style: preserve-3d;
+        }
+
+        .map-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.3), transparent 70%);
+            border-radius: 60px;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .map-glow.active {
+            opacity: 1;
+        }
+
+        .china-flag-corner {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 100px;
+            height: 60px;
+            background: linear-gradient(135deg, #e63946 0%, #e63946 50%, #ffd966 50%, #ffd966 100%);
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px solid gold;
+        }
+
+        /* 卡片网格 */
+        .section-title {
+            font-size: 3.8rem;
+            font-weight: 700;
+            margin: 6rem 0 3rem;
+            text-align: center;
+            background: linear-gradient(145deg, #ffffff, #ffd966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .card {
+            background: rgba(25, 35, 50, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 36px;
+            padding: 2.2rem 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -20px black;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffd966, #e63946, #ff8c42, #ffd966);
+            border-radius: 36px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: -1;
+        }
+
+        .card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: transparent;
+        }
+
+        .card:hover::before {
+            opacity: 0.8;
+        }
+
+        .card i {
+            font-size: 2.6rem;
+            color: #ffd966;
+            margin-bottom: 1.2rem;
+        }
+
+        .card h3 {
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+            color: #ffd966;
+        }
+
+        .card ul, .card p {
+            color: #d0e0f0;
+            font-size: 1.1rem;
+        }
+
+        /* 中国龙装饰 (纯CSS绘制) */
+        .dragon-divider {
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ffd966, #e63946, #ffd966, transparent);
+            margin: 4rem 0;
+            position: relative;
+        }
+
+        .dragon-divider::before {
+            content: "🐉";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #0b0e14;
+            padding: 0 2rem;
+            font-size: 2rem;
+            color: #ffd966;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 4rem 0 2rem;
+            color: #a0b8d0;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            margin-top: 4rem;
+        }
+
+        /* 滚动触发类 (GSAP 会动态添加) */
+        .gsap-ready {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><i class="fas fa-dragon"></i> 长城·CN</div>
+        <div class="nav-links">
+            <a href="#rules">必看</a>
+            <a href="#newbie">新手</a>
+            <a href="#flow">流程</a>
+            <a href="#greatwall">长城</a>
+            <a href="#advanced">进阶</a>
+        </div>
+    </nav>
+
+    <div class="content">
+        <!-- HERO 区域 -->
+        <section class="hero" id="top">
+            <div class="dragon-bg"></div>
+            <h1>
+                <span class="hero-line1">Territorial</span><br>
+                <span class="hero-line2">[CN] 战队</span>
+            </h1>
+            <p>龙腾万里 · 镇守山河</p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                <span class="cn-badge"><i class="fas fa-flag"></i> 中国玩家联盟</span>
+                <span class="cn-badge"><i class="fas fa-shield-halved"></i> 控线 · 轮转 · 绝招</span>
+            </div>
+        </section>
+
+        <!-- 视差区块 1: 游戏地图 + 变亮旋转 -->
+        <div class="parallax-block" id="block1">
+            <div class="parallax-image" id="gameMap">
+                <!-- Territorial.io 地图风格 Base64 占位图 (实际可替换为截图) -->
+                <svg viewBox="0 0 600 400" width="100%" height="auto" style="background:#1a2a3a;">
+                    <rect width="600" height="400" fill="#1e3a5f"/>
+                    <circle cx="200" cy="150" r="60" fill="#2a5a7a" stroke="#ffd966" stroke-width="2"/>
+                    <circle cx="400" cy="250" r="80" fill="#2a5a7a" stroke="#e63946" stroke-width="2"/>
+                    <polygon points="300,80 350,180 250,180" fill="#ffd966" opacity="0.6"/>
+                    <text x="300" y="200" fill="#ffd966" font-size="40" text-anchor="middle" font-weight="bold">CN</text>
+                    <text x="150" y="300" fill="#a0c0e0" font-size="20">Territorial.io</text>
+                </svg>
+                <div class="image-caption">🗺️ 世界地图 · 中国区域</div>
+            </div>
+            <div class="parallax-text">
+                <h2>龙之崛起</h2>
+                <p>每5.6秒为一循环，在进度条70%时出兵。开局每循环用30%兵力扩张，总兵力>7000时连续扩张3-4次。人口密度低于60勿攻玩家，高于100则需主动出击或增援队友。</p>
+                <span class="cn-badge">⚔️ 人机进攻 5-13%</span>
+                <span class="cn-badge">📊 密度公式 兵力/地盘</span>
+            </div>
+        </div>
+
+        <!-- 必看部分卡片网格 -->
+        <section id="rules">
+            <h2 class="section-title">⚠️ 军规 · 必看</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <i class="fas fa-ban"></i>
+                    <h3>禁止全军出击</h3>
+                    <p>打不过时可增援队友或按兵不动，<strong>切勿全军敌人</strong>，这是对队友的严重不尊重。</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-globe"></i>
+                    <h3>维护国际形象</h3>
+                    <p>禁止在大厅随意举报或骂人，有损中国玩家形象。</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-hourglass-half"></i>
+                    <h3>出兵节奏</h3>
+                    <p>进度条70%时出兵。进攻敌人每循环15%左右，避免过度扩张。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 长城展示区 - 核心视差特效（苹果风格：转弯+变亮） -->
+        <div class="greatwall-showcase" id="greatwall">
+            <h2 class="section-title" style="margin-bottom: 0;">🏯 万里长城 · 永不倒</h2>
+            <div class="map-wrapper" id="wallWrapper">
+                <!-- 长城地图风格 (模拟游戏内长城) -->
+                <svg class="map-base" id="wallMap" viewBox="0 0 900 500" width="100%" style="background:#2d4a3a;">
+                    <defs>
+                        <linearGradient id="wallGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#8b5a2b"/>
+                            <stop offset="50%" stop-color="#c99c47"/>
+                            <stop offset="100%" stop-color="#8b5a2b"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- 山峦背景 -->
+                    <path d="M0,400 Q150,250 300,350 T600,300 T900,250 L900,500 L0,500 Z" fill="#1e4a2a"/>
+                    <!-- 长城主体 (蜿蜒如龙) -->
+                    <path d="M50,300 Q200,200 300,280 Q400,350 500,260 Q600,180 750,250 Q850,300 900,280" stroke="#ffd966" stroke-width="20" fill="none" stroke-linecap="round"/>
+                    <path d="M50,300 Q200,200 300,280 Q400,350 500,260 Q600,180 750,250 Q850,300 900,280" stroke="#c99c47" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <!-- 烽火台 -->
+                    <rect x="280" y="260" width="40" height="60" fill="#b87c3a" stroke="#ffd966" stroke-width="2"/>
+                    <rect x="480" y="240" width="40" height="60" fill="#b87c3a" stroke="#ffd966" stroke-width="2"/>
+                    <rect x="720" y="230" width="40" height="60" fill="#b87c3a" stroke="#ffd966" stroke-width="2"/>
+                    <text x="450" y="400" fill="#ffd966" font-size="30" text-anchor="middle">居庸关</text>
+                </svg>
+                <div class="map-glow" id="wallGlow"></div>
+                <div class="china-flag-corner">🇨🇳</div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem; max-width: 800px;">
+                <p style="font-size: 1.5rem; color: #ffd966;">「不到长城非好汉」—— 在虚拟长城上，与队友共御外敌</p>
+                <p style="color: #a0c0e0;">长城地图灵感来自《和平精英》长城版本[citation:2]及《一梦江湖》居庸关还原[citation:4]</p>
+            </div>
+        </div>
+
+        <!-- 一般游戏流程卡片 -->
+        <section id="flow">
+            <h2 class="section-title">📜 一般流程</h2>
+            <div class="card-grid">
+                <div class="card"><i class="fas fa-flag"></i><h3>开局</h3><p>判断逆风/顺风/一般，逆风优先攻强敌，顺风控制局势，正常扩张。</p></div>
+                <div class="card"><i class="fas fa-forward"></i><h3>前期</h3><p>逆风继续攻强敌；顺风解决内部问题；一般加速扩张。</p></div>
+                <div class="card"><i class="fas fa-tachometer-alt"></i><h3>中期</h3><p>逆风控线；顺风高速扩张（密度可50%）；一般积累优势。</p></div>
+                <div class="card"><i class="fas fa-pause-circle"></i><h3>僵局</h3><p>保证自己面积最大兵力最多，爆兵打残小的，终极绝招：Coinflip。</p></div>
+            </div>
+        </section>
+
+        <!-- 进阶技巧视差区块 2: 龙纹旋转 + 变亮 -->
+        <div class="parallax-block" id="block2">
+            <div class="parallax-text">
+                <h2>🐉 进阶·控线</h2>
+                <p>做大了就尽量和更少的敌人接壤，防止被围攻。利用人机阻挡，注意红色×停止进攻。从海岸或河流进攻可调整战线。</p>
+                <p>心理分析：被堵久的人容易全军，接近小心；寻找新人玩家签协议，联手打老玩家。</p>
+            </div>
+            <div class="parallax-image" id="dragonImg">
+                <!-- 中国龙纹样 Base64 占位 -->
+                <svg viewBox="0 0 500 300" width="100%" style="background:#2a1e2a;">
+                    <path d="M100,150 Q200,50 300,150 Q400,250 450,200" stroke="#ffd966" stroke-width="8" fill="none"/>
+                    <circle cx="200" cy="140" r="20" fill="#e63946"/>
+                    <circle cx="350" cy="160" r="20" fill="#e63946"/>
+                    <text x="250" y="200" fill="#ffd966" font-size="36" text-anchor="middle">龍</text>
+                </svg>
+                <div class="image-caption">🐲 中国龙 · 祥瑞</div>
+            </div>
+        </div>
+
+        <!-- 中国元素装饰 -->
+        <div class="dragon-divider"></div>
+
+        <!-- 选地原则 + 兵力控制卡片 -->
+        <section id="advanced">
+            <h2 class="section-title">📍 选地 & 兵力</h2>
+            <div class="card-grid">
+                <div class="card"><i class="fas fa-map"></i><h3>选地原则</h3><ul><li>避开同色人机/真人聚集区</li><li>选空旷地带，避免贴脸</li><li>不要选小岛(冰岛/马达加斯加等)</li></ul></div>
+                <div class="card"><i class="fas fa-weight-hanging"></i><h3>兵力控制</h3><p>面积小密度低→送面积给队友；开船到小岛藏兵；进攻人机避免90%以后打。</p></div>
+                <div class="card"><i class="fas fa-brain"></i><h3>局势分析</h3><p>某一方特别强大时，不进攻其他队伍，让他攒兵对付最大敌人，更划算。</p></div>
+            </div>
+        </section>
+
+        <div class="footer">
+            <p>基于 Territorial [CN] 战队攻略重构 · 苹果风格视差动画版<br>龙纹 · 长城 · 中国元素融合 | 滚动即亮 旋转 转弯</p>
+        </div>
+    </div>
+
+    <!-- GSAP 滚动动画脚本 (苹果官网效果) -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 等待 DOM 完全加载
+        window.addEventListener('load', function() {
+            // 1. 图片变亮 + 旋转特效 (区块1)
+            gsap.to("#gameMap", {
+                scrollTrigger: {
+                    trigger: "#block1",
+                    start: "top 70%",
+                    end: "bottom 30%",
+                    scrub: 1.5,
+                    onUpdate: (self) => {
+                        const progress = self.progress;
+                        // 根据滚动进度控制亮度和旋转
+                        const brightness = 0.5 + progress * 0.8; // 0.5 → 1.3
+                        const rotate = -5 + progress * 10; // -5deg → 5deg
+                        document.getElementById('gameMap').style.filter = `brightness(${brightness}) saturate(${1 + progress}) drop-shadow(0 0 ${progress*20}px gold)`;
+                        document.getElementById('gameMap').style.transform = `rotate(${rotate}deg) scale(${1 + progress*0.1})`;
+                    }
+                }
+            });
+
+            // 2. 长城地图转弯 + 变亮 (苹果风格)
+            gsap.to("#wallMap", {
+                scrollTrigger: {
+                    trigger: "#greatwall",
+                    start: "top 80%",
+                    end: "bottom 20%",
+                    scrub: 2,
+                    onUpdate: (self) => {
+                        const p = self.progress;
+                        // 亮度变化
+                        const bright = 0.6 + p * 0.8;
+                        document.getElementById('wallMap').style.filter = `brightness(${bright}) saturate(${1 + p*0.8})`;
+                        // 转弯效果: 沿曲线移动 + 旋转
+                        const rotateY = -15 + p * 30; // -15deg → 15deg
+                        const rotateX = 5 - p * 10;
+                        const translateX = -50 + p * 100; // 模拟转弯路径
+                        document.getElementById('wallWrapper').style.transform = 
+                            `perspective(1000px) rotateY(${rotateY}deg) rotateX(${rotateX}deg) translateX(${translateX}px)`;
+                        // 光晕激活
+                        const glow = document.getElementById('wallGlow');
+                        glow.style.opacity = p * 0.8;
+                        glow.classList.add('active');
+                    }
+                }
+            });
+
+            // 3. 龙纹图片旋转 + 变亮
+            gsap.to("#dragonImg", {
+                scrollTrigger: {
+                    trigger: "#block2",
+                    start: "top 70%",
+                    end: "bottom 30%",
+                    scrub: 1.8,
+                    onUpdate: (self) => {
+                        const p = self.progress;
+                        document.getElementById('dragonImg').style.filter = `brightness(${0.4 + p}) drop-shadow(0 0 ${p*25}px #ffd966)`;
+                        document.getElementById('dragonImg').style.transform = `rotate(${-10 + p*20}deg) scale(${0.9 + p*0.2})`;
+                    }
+                }
+            });
+
+            // 4. 卡片淡入 (使用 ScrollTrigger 批量)
+            gsap.utils.toArray('.card').forEach((card, i) => {
+                gsap.fromTo(card, 
+                    { opacity: 0, y: 50 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 85%",
+                            end: "bottom 20%",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+
+            // 5. 标题动画
+            gsap.utils.toArray('.section-title').forEach(title => {
+                gsap.fromTo(title, 
+                    { opacity: 0, x: -30 },
+                    {
+                        opacity: 1,
+                        x: 0,
+                        duration: 1.2,
+                        scrollTrigger: {
+                            trigger: title,
+                            start: "top 80%",
+                            end: "bottom 20%",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+        });
+    </script>
+
+    <!-- 导航平滑滚动 -->
+    <script>
+        document.querySelectorAll('.nav-links a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if(target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
