@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Territorial.io [CN] 頂級極簡教程</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #fbfbfd;
+            --text-color: #1d1d1f;
+            --card-bg: #ffffff;
+            --accent-gradient: linear-gradient(135deg, #5E5CE6 0%, #0A84FF 100%);
+            --card-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            --apple-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; line-height: 1.6; }
+
+        /* 導航欄 */
+        .navbar { position: fixed; top: 0; width: 100%; padding: 18px 40px; background: rgba(251, 251, 253, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: center; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo { font-weight: 600; font-size: 19px; letter-spacing: -0.5px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: #515154; font-size: 14px; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--text-color); }
+
+        /* Hero */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
+        .hero h1 { font-size: clamp(48px, 10vw, 96px); font-weight: 700; letter-spacing: -3px; line-height: 1; margin-bottom: 24px; }
+        .gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% 200%; }
+        .hero p { font-size: 24px; color: #86868b; font-weight: 400; max-width: 600px; }
+
+        /* 內容容器 */
+        .container { max-width: 1100px; margin: 0 auto; padding: 100px 24px; }
+        .section-header { margin-bottom: 60px; text-align: center; opacity: 0; transform: translateY(30px); }
+        .section-header h2 { font-size: 48px; font-weight: 600; letter-spacing: -1.5px; }
+
+        /* 卡片網格 */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 120px; }
+        .card { background: var(--card-bg); border-radius: 28px; padding: 40px; box-shadow: var(--card-shadow); transition: transform 0.8s var(--apple-ease), box-shadow 0.8s var(--apple-ease); border: 1px solid rgba(0,0,0,0.03); opacity: 0; transform: translateY(60px); }
+        .card:hover { transform: translateY(-10px) scale(1.01); box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        .icon-box { width: 64px; height: 64px; border-radius: 20px; background: var(--accent-gradient); display: flex; align-items: center; justify-content: center; color: white; font-size: 26px; margin-bottom: 30px; }
+        .card h3 { font-size: 24px; font-weight: 600; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .card p { font-size: 16px; color: #515154; line-height: 1.7; }
+
+        /* 特殊區塊 */
+        .special-block { background: #1d1d1f; color: #f5f5f7; border-radius: 40px; padding: 80px; margin: 100px 0; display: flex; align-items: center; gap: 50px; }
+        .special-content { flex: 2; }
+        .special-graphic { flex: 1; text-align: center; font-size: 100px; color: #5E5CE6; }
+        
+        .footer { text-align: center; padding: 60px; color: #86868b; font-size: 14px; border-top: 1px solid rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Territorial.io [CN]</div>
+        <div class="nav-links">
+            <a href="#basic">開局</a>
+            <a href="#mechanics">機制</a>
+            <a href="#diplomacy">外交</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1 id="hero-title">從新手到 <br><span class="gradient-text">Tier 3</span></h1>
+        <p id="hero-sub">Territorial.io [CN] 頂級攻略與極簡 UI</p>
+    </section>
+
+    <div class="container">
+        <div class="section-header" id="basic">
+            <h2>開局初探與基礎</h2>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-clock"></i></div>
+                <h3>週期與延遲</h3>
+                <p>一個 Cycle 長度為 5.6s，分為 10 次 Tick。聯機模式中，為了抵銷網絡延遲，通常建議在第 6 個 Tick 末出兵。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-percentage"></i></div>
+                <h3>出兵比例</h3>
+                <p>新手開局建議調整至 26%。具體場景：打空地用 30%，打 Bot 用 5-10%，攻擊玩家控制在 10-15%。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-map-marked-alt"></i></div>
+                <h3>選點策略</h3>
+                <p>總原則是「空曠」。要求周圍真人少、空地大且 Bot 少。好的選點是決定面積上限的關鍵。</p>
+            </div>
+        </div>
+
+        <div class="special-block" id="mechanics">
+            <div class="special-content">
+                <h2 style="font-size: 40px; margin-bottom: 20px;">密度是增長的命脈</h2>
+                <p style="font-size: 18px; color: #d2d2d7; margin-bottom: 30px;">
+                    密度 = 兵力 / 面積。當密度小於 100 時，密度越大增長越快。當密度在 100-150 時，增加密度會減慢增長。兵力增長的最佳狀態是維持在 100-110。
+                </p>
+                <div style="font-size: 20px; font-weight: 600; color: #5E5CE6;">最佳維持密度：110</div>
+            </div>
+            <div class="special-graphic">
+                <i class="fas fa-chart-line"></i>
+            </div>
+        </div>
+
+        <div class="section-header" id="diplomacy">
+            <h2>高級戰略與外交</h2>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-handshake"></i></div>
+                <h3>撕毀條約時機</h3>
+                <p>互不侵犯條約不代表永不進攻。當自身密度遠高於 100，或對手夠弱時，果斷撕毀條約進行收割。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-gift"></i></div>
+                <h3>捐兵策略</h3>
+                <p>當不處於前線且密度略高於 100 時，捐贈 10%-15%。看到 [CN] 高手如 itt 發送表情時，應全軍捐贈（Fulldonate）。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-trophy"></i></div>
+                <h3>禁止全軍出擊</h3>
+                <p>Fullsend (全軍出擊) 會導致領地被瓜分。除非有特殊戰略意義，否則應避免這種不負責任的行為。</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>資料引用自 Territorial.io 新手教程</p>
+        <p>Territorial [CN] 氏族 2026</p>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero 載入動畫
+        gsap.from("#hero-title", { opacity: 0, y: 80, duration: 2, ease: "power4.out" });
+        gsap.from("#hero-sub", { opacity: 0, y: 40, duration: 1.5, delay: 0.5, ease: "power3.out" });
+
+        // 背景漸層流動動畫
+        gsap.to(".gradient-text", {
+            backgroundPosition: "200% center",
+            duration: 6,
+            repeat: -1,
+            ease: "linear"
+        });
+
+        // 卡片交錯淡入
+        gsap.utils.toArray(".card").forEach((card, i) => {
+            gsap.to(card, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                delay: i * 0.15,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                }
+            });
+        });
+
+        // 視差效果
+        gsap.to(".special-block", {
+            y: 0,
+            opacity: 1,
+            scrollTrigger: {
+                trigger: ".special-block",
+                start: "top 90%",
+                end: "bottom 60%",
+                scrub: true
+            }
+        });
+        
+        gsap.from(".section-header", {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            scrollTrigger: {
+                trigger: ".section-header",
+                start: "top 85%",
+            }
+        });
+    </script>
+</body>
+</html>
