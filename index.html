@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Territorial · 红白极简攻略</title>
+    <!-- GSAP + ScrollTrigger (苹果官网动画引擎) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Font Awesome 图标 (可选) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* 全局重置 + 极简红白风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1d1d1f;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* 导航栏 - 半透明磨砂 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 1.2rem 2.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e53e3e; /* 红色 */
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: #1d1d1f;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #e53e3e;
+        }
+
+        /* 主要内容区 */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 2rem 80px;
+        }
+
+        /* 大标题区域 */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 10vw, 6rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: #1d1d1f;
+        }
+
+        .hero h1 span {
+            color: #e53e3e; /* 红色强调 */
+            display: inline-block;
+        }
+
+        .hero p {
+            font-size: 1.8rem;
+            color: #86868b;
+            max-width: 700px;
+            margin-top: 1.5rem;
+        }
+
+        /* 图片容器 (苹果风格视差) */
+        .parallax-block {
+            position: relative;
+            width: 100%;
+            min-height: 500px;
+            margin: 8rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 4rem;
+        }
+
+        .parallax-image {
+            flex: 1;
+            min-width: 300px;
+            max-width: 550px;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.15);
+            background-color: #f5f5f7;
+            transition: filter 0.3s ease;
+            filter: brightness(0.7) saturate(0.9);
+            transform-origin: center center;
+        }
+
+        .parallax-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* 图片占位：简单几何图形 (无中国元素) */
+        .placeholder-img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e53e3e;
+            font-size: 3rem;
+            font-weight: 300;
+        }
+
+        .parallax-text {
+            flex: 1;
+            min-width: 300px;
+            padding: 2rem;
+        }
+
+        .parallax-text h2 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1d1d1f;
+        }
+
+        .parallax-text h2 i {
+            color: #e53e3e;
+            margin-right: 0.5rem;
+        }
+
+        .parallax-text p {
+            font-size: 1.2rem;
+            color: #515154;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #e53e3e;
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-right: 0.8rem;
+        }
+
+        /* 卡片网格 */
+        .section-title {
+            font-size: 3rem;
+            font-weight: 600;
+            margin: 5rem 0 2.5rem;
+            color: #1d1d1f;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: #e53e3e;
+            border-radius: 2px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0 4rem;
+        }
+
+        .card {
+            background-color: #f9f9fb;
+            border-radius: 24px;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -12px rgba(229, 62, 62, 0.15);
+        }
+
+        .card i {
+            font-size: 2.2rem;
+            color: #e53e3e;
+            margin-bottom: 1.2rem;
+        }
+
+        .card h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1d1d1f;
+        }
+
+        .card ul, .card p {
+            color: #515154;
+            font-size: 1rem;
+            padding-left: 1.2rem;
+        }
+
+        .card li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* 地图展示区 - 3D翻转效果 */
+        .map-showcase {
+            width: 100%;
+            margin: 8rem 0;
+            text-align: center;
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .map-image {
+            width: 100%;
+            height: auto;
+            border-radius: 40px;
+            box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.2);
+            background: #f0f0f0;
+            transition: transform 0.1s ease;
+        }
+
+        .map-caption {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            color: #86868b;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            color: #86868b;
+            border-top: 1px solid #eaeaea;
+            margin-top: 4rem;
+        }
+
+        /* 动画初始状态 (GSAP 会处理) */
+        .gsap-fade {
+            opacity: 0;
+            y: 20;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><i class="fas fa-flag"></i> Territorial [CN]</div>
+        <div class="nav-links">
+            <a href="#rules">必看</a>
+            <a href="#newbie">新手</a>
+            <a href="#flow">流程</a>
+            <a href="#map">地图</a>
+            <a href="#advanced">进阶</a>
+        </div>
+    </nav>
+
+    <div class="content">
+        <!-- HERO 大标题 -->
+        <section class="hero" id="top">
+            <h1>
+                <span>Territorial</span><br>
+                [CN] 战队攻略
+            </h1>
+            <p>极简 · 红白 · 滚动动画</p>
+        </section>
+
+        <!-- 视差区块 1: 游戏地图 + 变亮旋转 -->
+        <div class="parallax-block" id="block1">
+            <div class="parallax-image" id="gameMap">
+                <div class="placeholder-img">
+                    <span>🌍</span>
+                </div>
+            </div>
+            <div class="parallax-text">
+                <h2><i class="fas fa-circle"></i> 核心机制</h2>
+                <p><span class="badge">5.6秒/循环</span> 进度条70%时出兵。开局每循环用30%兵力扩张空地，总兵力>7000时可连续扩张3-4次。人口密度低于60勿攻玩家，高于100则需出击或增援。</p>
+                <p><span class="badge">密度公式</span> 兵力/地盘数。低于60勿攻玩家，高于100主动出击。</p>
+            </div>
+        </div>
+
+        <!-- 必看部分卡片 -->
+        <section id="rules">
+            <h2 class="section-title">⚠️ 必看准则</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <i class="fas fa-ban"></i>
+                    <h3>禁止全军出击</h3>
+                    <p>打不过时可增援队友或按兵不动，<strong>切勿全军敌人</strong>。</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-globe"></i>
+                    <h3>维护形象</h3>
+                    <p>禁止随意举报或骂人，维护良好游戏环境。</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-hourglass-half"></i>
+                    <h3>出兵节奏</h3>
+                    <p>进攻敌人每循环15%左右，避免过度扩张。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 新手入坑卡片 -->
+        <section id="newbie">
+            <h2 class="section-title">🆕 新手快速入坑</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <i class="fas fa-bullseye"></i>
+                    <h3>进攻人机</h3>
+                    <p>新手用5%-6%兵力（名字带下划线）。熟练后用6%-13%，不要同时打太多。</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>人口密度</h3>
+                    <p>密度 = 兵力/地盘数。低于60勿攻玩家，高于100主动出击或增援。</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>被进攻时</h3>
+                    <p>密度过低或面积悬殊，不要进攻敌人，建议增援队友。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 地图展示区 (3D翻转效果) -->
+        <div class="map-showcase" id="map">
+            <h2 class="section-title" style="text-align: center;">🗺️ 选地原则</h2>
+            <div class="map-container" id="map3d">
+                <div class="map-image" id="worldMap">
+                    <div class="placeholder-img" style="aspect-ratio: 16/9;">
+                        <span>🌐 世界地图</span>
+                    </div>
+                </div>
+                <div class="map-caption">
+                    避免同色人机/真人聚集，选择空旷地带，<strong>不要选小岛</strong>（冰岛、马达加斯加等）。
+                </div>
+            </div>
+        </div>
+
+        <!-- 一般流程卡片 -->
+        <section id="flow">
+            <h2 class="section-title">📋 一般游戏流程</h2>
+            <div class="card-grid">
+                <div class="card"><i class="fas fa-flag"></i><h3>开局</h3><p>判断逆风/顺风/一般，逆风优先攻强敌，顺风控制局势，正常扩张。</p></div>
+                <div class="card"><i class="fas fa-forward"></i><h3>前期</h3><p>逆风继续攻强敌；顺风解决内部问题；一般加速扩张。</p></div>
+                <div class="card"><i class="fas fa-tachometer-alt"></i><h3>中期</h3><p>逆风控线；顺风高速扩张（密度可50%）；一般积累优势。</p></div>
+                <div class="card"><i class="fas fa-pause-circle"></i><h3>僵局</h3><p>保证自己面积最大兵力最多，爆兵打残小的，终极绝招：Coinflip。</p></div>
+            </div>
+        </section>
+
+        <!-- 视差区块 2: 进阶技巧 + 变亮旋转 -->
+        <div class="parallax-block" id="block2">
+            <div class="parallax-text">
+                <h2><i class="fas fa-circle"></i> 进阶控线</h2>
+                <p>做大了就尽量和更少的敌人接壤，防止被围攻。利用人机阻挡，注意红色×停止进攻。从海岸或河流进攻可调整战线。</p>
+                <p>心理分析：被堵久的人容易全军，接近小心；寻找新人玩家签协议，联手打老玩家。</p>
+                <span class="badge">控线</span>
+                <span class="badge">心理</span>
+                <span class="badge">兵力控制</span>
+            </div>
+            <div class="parallax-image" id="advanceImg">
+                <div class="placeholder-img">
+                    <span>⚙️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 额外卡片：兵力控制 & 局势分析 -->
+        <section id="advanced">
+            <h2 class="section-title">⚡ 兵力 & 局势</h2>
+            <div class="card-grid">
+                <div class="card"><i class="fas fa-weight-hanging"></i><h3>兵力控制</h3><p>面积小密度低→送面积给队友；开船到小岛藏兵；进攻人机避免90%以后打。</p></div>
+                <div class="card"><i class="fas fa-brain"></i><h3>局势分析</h3><p>某一方特别强大时，不进攻其他队伍，让他攒兵对付最大敌人。</p></div>
+                <div class="card"><i class="fas fa-draw-polygon"></i><h3>控线技巧</h3><p>快要接近敌方时，利用人机阻挡，注意红色×收兵。可通过海岸调整战线。</p></div>
+            </div>
+        </section>
+
+        <div class="footer">
+            <p>红白极简 · 滚动动画版 · 基于 Territorial [CN] 战队攻略</p>
+        </div>
+    </div>
+
+    <!-- GSAP 滚动动画脚本 (苹果风格) -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener('load', function() {
+            // 1. 区块1：地图图片变亮 + 旋转
+            gsap.to("#gameMap", {
+                scrollTrigger: {
+                    trigger: "#block1",
+                    start: "top 70%",
+                    end: "bottom 30%",
+                    scrub: 1.5,
+                    onUpdate: (self) => {
+                        const p = self.progress;
+                        const brightness = 0.7 + p * 0.6; // 0.7 → 1.3
+                        const rotate = -5 + p * 10; // -5° → 5°
+                        gsap.set("#gameMap", {
+                            filter: `brightness(${brightness}) saturate(${1 + p * 0.3})`,
+                            rotation: rotate,
+                            scale: 1 + p * 0.05
+                        });
+                    }
+                }
+            });
+
+            // 2. 地图3D翻转 (map3d)
+            gsap.to("#worldMap", {
+                scrollTrigger: {
+                    trigger: "#map",
+                    start: "top 80%",
+                    end: "bottom 20%",
+                    scrub: 2,
+                    onUpdate: (self) => {
+                        const p = self.progress;
+                        // 3D旋转: 绕Y轴旋转 -15° 到 15°, 绕X轴轻微变化
+                        const rotateY = -15 + p * 30;
+                        const rotateX = 5 - p * 10;
+                        gsap.set("#worldMap", {
+                            transform: `perspective(800px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
+                            filter: `brightness(${0.8 + p * 0.5})`
+                        });
+                    }
+                }
+            });
+
+            // 3. 区块2：进阶图片变亮 + 旋转
+            gsap.to("#advanceImg", {
+                scrollTrigger: {
+                    trigger: "#block2",
+                    start: "top 70%",
+                    end: "bottom 30%",
+                    scrub: 1.8,
+                    onUpdate: (self) => {
+                        const p = self.progress;
+                        gsap.set("#advanceImg", {
+                            filter: `brightness(${0.6 + p}) saturate(${1 + p * 0.4})`,
+                            rotation: 10 - p * 20,
+                            scale: 0.95 + p * 0.1
+                        });
+                    }
+                }
+            });
+
+            // 4. 卡片淡入 (每个卡片)
+            gsap.utils.toArray('.card').forEach((card) => {
+                gsap.fromTo(card, 
+                    { opacity: 0, y: 30 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 85%",
+                            end: "bottom 20%",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+
+            // 5. 标题淡入 (从左)
+            gsap.utils.toArray('.section-title').forEach(title => {
+                gsap.fromTo(title,
+                    { opacity: 0, x: -30 },
+                    {
+                        opacity: 1,
+                        x: 0,
+                        duration: 1.2,
+                        scrollTrigger: {
+                            trigger: title,
+                            start: "top 80%",
+                            end: "bottom 20%",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+        });
+    </script>
+
+    <!-- 导航平滑滚动 -->
+    <script>
+        document.querySelectorAll('.nav-links a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
