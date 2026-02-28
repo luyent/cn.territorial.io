@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Territorial.io [CN] 頂級極簡教程 · 完全版</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #fbfbfd;
+            --text-color: #1d1d1f;
+            --card-bg: #ffffff;
+            --accent-gradient: linear-gradient(135deg, #5E5CE6 0%, #0A84FF 100%);
+            --card-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            --apple-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; line-height: 1.6; }
+
+        /* 導航欄 */
+        .navbar { position: fixed; top: 0; width: 100%; padding: 18px 40px; background: rgba(251, 251, 253, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: center; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo { font-weight: 600; font-size: 19px; letter-spacing: -0.5px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: #515154; font-size: 14px; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--text-color); }
+
+        /* Hero */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
+        .hero h1 { font-size: clamp(48px, 10vw, 96px); font-weight: 700; letter-spacing: -3px; line-height: 1; margin-bottom: 24px; }
+        .gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% 200%; }
+        .hero p { font-size: 24px; color: #86868b; font-weight: 400; max-width: 600px; }
+
+        /* 內容容器 */
+        .container { max-width: 1100px; margin: 0 auto; padding: 100px 24px; }
+        .section-header { margin-bottom: 60px; text-align: center; opacity: 0; transform: translateY(30px); }
+        .section-header h2 { font-size: 48px; font-weight: 600; letter-spacing: -1.5px; }
+        .section-header p { color: #86868b; font-size: 20px; margin-top: 12px; }
+
+        /* 卡片網格 */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 120px; }
+        .card { background: var(--card-bg); border-radius: 28px; padding: 40px; box-shadow: var(--card-shadow); transition: transform 0.8s var(--apple-ease), box-shadow 0.8s var(--apple-ease); border: 1px solid rgba(0,0,0,0.03); opacity: 0; transform: translateY(60px); }
+        .card:hover { transform: translateY(-10px) scale(1.01); box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        .icon-box { width: 64px; height: 64px; border-radius: 20px; background: var(--accent-gradient); display: flex; align-items: center; justify-content: center; color: white; font-size: 26px; margin-bottom: 30px; }
+        .card h3 { font-size: 24px; font-weight: 600; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .card p { font-size: 16px; color: #515154; line-height: 1.7; }
+        .card ul, .card ol { color: #515154; font-size: 16px; padding-left: 20px; margin-top: 10px; }
+        .card li { margin-bottom: 6px; }
+
+        /* 特殊區塊 */
+        .special-block { background: #1d1d1f; color: #f5f5f7; border-radius: 40px; padding: 80px; margin: 100px 0; display: flex; align-items: center; gap: 50px; }
+        .special-content { flex: 2; }
+        .special-graphic { flex: 1; text-align: center; font-size: 100px; color: #5E5CE6; }
+
+        /* 表格樣式 */
+        .table-wrapper { background: var(--card-bg); border-radius: 28px; padding: 30px; box-shadow: var(--card-shadow); margin-bottom: 60px; border: 1px solid rgba(0,0,0,0.03); }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th { background: #f5f5f7; font-weight: 600; padding: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #e9e9ed; }
+        .footer { text-align: center; padding: 60px; color: #86868b; font-size: 14px; border-top: 1px solid rgba(0,0,0,0.05); }
+
+        /* 工具提示與標籤 */
+        .badge { display: inline-block; background: var(--accent-gradient); color: white; padding: 4px 12px; border-radius: 40px; font-size: 14px; font-weight: 500; margin-right: 8px; }
+
+        /* 響應式微調 */
+        @media (max-width: 700px) {
+            .navbar { padding: 15px 20px; }
+            .special-block { flex-direction: column; padding: 40px; text-align: center; }
+            .section-header h2 { font-size: 36px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Territorial.io [CN] 完全教程</div>
+        <div class="nav-links">
+            <a href="#basics">基礎</a>
+            <a href="#density">密度</a>
+            <a href="#diplomacy">外交</a>
+            <a href="#clan">氏族</a>
+            <a href="#advanced">進階</a>
+            <a href="#tier">實力分級</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1 id="hero-title">從新手到 <br><span class="gradient-text">Tier 2</span></h1>
+        <p id="hero-sub">Territorial.io [CN] 最詳盡的極簡攻略 · 基於官方新手教程</p>
+    </section>
+
+    <div class="container">
+        <!-- ========== 基礎篇 ========== -->
+        <div class="section-header" id="basics">
+            <h2>▍ 基礎常識 · Level 1</h2>
+            <p>面積・兵力・密度・出兵比例・核心按鍵</p>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-vector-square"></i></div>
+                <h3>面積 / 兵力 / 密度</h3>
+                <p><strong>密度 = 兵力 / 面積</strong>。是衡量防禦力的核心指標。可使用工具即時顯示：<br>➜ <a href="https://fxclient.github.io/FXclient" target="_blank" style="color:#0A84FF;">fxclient.github.io/FXclient</a></p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-percent"></i></div>
+                <h3>出兵比例建議</h3>
+                <ul>
+                    <li><span class="badge">空地</span> 30% 左右</li>
+                    <li><span class="badge">Bot</span> 5% – 10%</li>
+                    <li><span class="badge">真人</span> 10% – 15%</li>
+                    <li><span class="badge">新手開局</span> 26% (詳見Level2)</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-mouse-pointer"></i></div>
+                <h3>基本按鍵</h3>
+                <p>⚔️ 陸上攻擊 (鄰國) · 🚢 發送船隻 · 🫱 捐獻兵力<br>回收出兵 ↺ 點擊「×」；追加兵力點擊「+」</p>
+            </div>
+        </div>
+
+        <!-- ========== 開局精講 Level 2 & 3 ========== -->
+        <div class="section-header">
+            <h2>▍ 開局定勝負 · Level 2 & 3</h2>
+            <p>週期・Tick・26% 開局表・選點原則・清 bot</p>
+        </div>
+
+        <!-- Tick 表格 -->
+        <div class="table-wrapper" style="opacity:0; transform:translateY(30px);" data-animate="true">
+            <h3 style="margin-bottom:20px; font-size:28px;">📊 基礎開局理想面積表 (26% 出兵)</h3>
+            <table>
+                <thead><tr><th>Cycle</th><th>Tick</th><th>理想面積</th><th>備註</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>0-9</td><td>84</td><td>第6 tick末出兵 (聯機)</td></tr>
+                    <tr><td>2</td><td>0-9</td><td>220</td><td>/</td></tr>
+                    <tr><td>3</td><td>0-9</td><td>480</td><td>/</td></tr>
+                    <tr><td>4</td><td>0-9</td><td>924</td><td>/</td></tr>
+                    <tr><td>5</td><td>0-9</td><td>2112</td><td>/</td></tr>
+                    <tr><td>6</td><td colspan="3">進入無限擴張階段，持續點「+」補兵</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:15px; color:#515154;">※ 一個 cycle = 5.6 秒，分為 10 個 tick (0～9)。聯機延遲補償 ⇒ 第6 tick末出兵。</p>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-map-pin"></i></div>
+                <h3>選點總原則：空曠</h3>
+                <p>周圍真人少、空地大且 bot 少。好的選點直接決定你的面積上限。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-robot"></i></div>
+                <h3>1v1micro 清 bot</h3>
+                <p>使用「恰好能一次消滅」的兵力，並趁 bot 剛出兵時偷襲。初期略多於10%，之後比例逐漸下降。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-stopwatch"></i></div>
+                <h3>進階開局</h3>
+                <p>ittopening (腳本) 與 freddoopening (手操) 以第6 cycle初始面積為評判標準，將在更高階教程中介紹。</p>
+            </div>
+        </div>
+
+        <!-- ========== 密度專區 (Level 4 & 5) ========== -->
+        <div class="special-block" id="density">
+            <div class="special-content">
+                <h2 style="font-size: 40px; margin-bottom: 20px;">⚖️ 密度 · 增長與消耗</h2>
+                <p style="font-size: 18px; color: #d2d2d7; margin-bottom: 30px;">
+                    <strong>密度 < 100</strong> : 越大增長越快<br>
+                    <strong>100 ≤ 密度 < 150</strong> : 越大增長越慢 (最佳維持 110 左右)<br>
+                    <strong>密度 = 150</strong> : 兵力停止增長！絕對不要停留在此。<br>
+                    <span style="display:block; margin-top:20px;">⚔️ 兵力消耗比：若防守方不還手，攻方消耗2 : 防守方消耗1；若同時回擊則為 1:1。</span>
+                </p>
+                <div style="font-size: 20px; font-weight: 600; color: #5E5CE6;">密度過低 ⇒ 容易成為靶子；密度過高 ⇒ 捐給前線</div>
+            </div>
+            <div class="special-graphic">
+                <i class="fas fa-chart-simple"></i>
+            </div>
+        </div>
+
+        <!-- 密度實戰建議卡片 -->
+        <div class="card-grid" style="margin-top:-40px;">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-shield-halved"></i></div>
+                <h3>何時防守？</h3>
+                <p>若對方密度比你高，不要還手！以守待攻或捐兵給隊友。還手只會加速送地。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-crosshairs"></i></div>
+                <h3>何時進攻？</h3>
+                <p>密度達到60以上，且比目標大時可考慮。但永遠避免 Fullsend (全軍出擊)，除非特殊戰略。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-gauge-high"></i></div>
+                <h3>密度監控工具</h3>
+                <p><i class="fas fa-link"></i> fxclient.github.io/FXclient 可顯示即時密度，強烈推薦使用。</p>
+            </div>
+        </div>
+
+        <!-- ========== 名字與氏族 Level 6 ========== -->
+        <div class="section-header" id="clan">
+            <h2>▍ 名字 · 氏族 · [CN]</h2>
+            <p>名字顏色、氏族歷史、加入方式</p>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-signature"></i></div>
+                <h3>名字顏色</h3>
+                <p>默認灰色。全球排名前10000 ⇒ 淡藍色；前100 ⇒ 彩色。<br>被舉報成功 ⇒ 變為 "Redacted"+ID後兩位。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-flag"></i></div>
+                <h3>[CN] 氏族簡史</h3>
+                <ul style="list-style-type:none; padding-left:0;">
+                    <li>📅 2024.08.23 首個積分</li>
+                    <li>📅 2025.01.06 正式建隊</li>
+                    <li>📅 2025.10.01 衝上氏族榜第一</li>
+                    <li>📅 2026.01.06 一周年</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-right-to-bracket"></i></div>
+                <h3>加入 [CN]</h3>
+                <p>將名字開頭改為 [CN] / [Cn] / [cn] 即可。高手雲集：Leader LostlyPC、tt、公共金庫 ourX1 等。</p>
+            </div>
+        </div>
+
+        <!-- ========== 外交大全 Level 7 ========== -->
+        <div class="section-header" id="diplomacy">
+            <h2>▍ 外交藝術 · Level 7</h2>
+            <p>捐兵限制 · 互不侵犯 · 表情密碼 · 和平投票</p>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-hand-holding-heart"></i></div>
+                <h3>捐兵時機</h3>
+                <p>不在前線且密度 ≈110 時，每次捐 10%–15%。看到高手 (如itt) 發送捐兵表情 ⇒ Fulldonate！</p>
+                <p style="margin-top:8px;">⚠️ 密度150時無法捐贈，開局也有時間限制。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-file-contract"></i></div>
+                <h3>互不侵犯條約 (NAP)</h3>
+                <p>不是永遠和平！當對方變弱、你密度極高、或可聯手夾擊時，果斷撕毀條約收割。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-face-smile"></i></div>
+                <h3>表情解碼 (節選)</h3>
+                <p>😈 欺騙用 · ❤️ 友好 · ⚠️ 全軍警告 · 🕊️ 和平投票 (可欺騙fullsend後立即同意)</p>
+                <p style="margin-top:8px;">「CN」旗幟表情代表熱愛氏族，但小心外國人冒用。</p>
+            </div>
+        </div>
+
+        <!-- ========== 進階戰略 Level 8 & 勝利條件 ========== -->
+        <div class="section-header" id="advanced">
+            <h2>▍ 進階全局意識 · Level 8</h2>
+            <p>勝利分數 · 搶分 · 海島奇兵 · 餅圖觀察</p>
+        </div>
+        <div class="table-wrapper" style="opacity:0; transform:translateY(30px);" data-animate="true">
+            <h3 style="margin-bottom:20px;">🏆 氏族分數分配範例</h3>
+            <table>
+                <thead><tr><th>玩家 (氏族)</th><th>面積</th><th>獲得氏族分數</th></tr></thead>
+                <tbody>
+                    <tr><td>[CN] LostlyPC</td><td>180000</td><td>360.00</td></tr>
+                    <tr><td>[void] itt</td><td>120000</td><td>0 (非獲勝氏族)</td></tr>
+                    <tr><td>[cn] 新手</td><td>9990</td><td>19.98</td></tr>
+                    <tr><td>[cn] 海島</td><td>10</td><td>0.02</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:15px;">※ 只有獲勝隊伍中 <strong>面積和最大的氏族</strong> 獲得全部氏族分數，氏族內按面積比例分配。</p>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-umbrella-beach"></i></div>
+                <h3>海島奇兵 (Island hopping)</h3>
+                <p><strong>一般不推薦</strong>，因為拿不到氏族分數。唯一例外：你將是勝利隊伍中該氏族唯一玩家，且氏族分數可撿漏。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-chart-pie"></i></div>
+                <h3>隊伍餅圖 & 全局</h3>
+                <p>隨時關注左側隊伍面積佔比。當某隊獨大，應聯合其他隊伍共同壓制。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-flag-checkered"></i></div>
+                <h3>勝利前搶分</h3>
+                <p>確認隊伍即將勝利時，在安全前提下瘋狂出兵占地，壓制同氏族競爭者以外的面積。</p>
+            </div>
+        </div>
+
+        <!-- ========== 成果檢驗 & Tier 分級 ========== -->
+        <div class="special-block" style="background: linear-gradient(145deg, #2c2c2e, #1d1d1f);" id="tier">
+            <div class="special-content">
+                <h2 style="font-size: 40px; margin-bottom: 20px;">📋 實力分級 · Tier 0 ~ Tier 6</h2>
+                <p style="font-size: 18px; color: #d2d2d7; margin-bottom: 20px;">
+                    <span class="badge">Tier 0</span> iott, Water —— 超頂尖，完美開局，絕對控局<br>
+                    <span class="badge">Tier 1</span> RedactedRedacted, Inori, kafu —— 高手，精通微操與外交<br>
+                    <span class="badge">Tier 2</span> 競賽生吶, KP, 白月梵星 —— 良好，能配合能主C<br>
+                    <span class="badge">Tier 3</span> zhou jie lun, MaxLiu —— 中等，聽指揮不坑隊友<br>
+                    <span class="badge">Tier 4</span> Miku最高, ccf_noi —— 正常玩家<br>
+                    <span class="badge">Tier 5</span> 無代表作 —— 菜鳥，無意識<br>
+                    <span class="badge">Tier 6</span> 亂玩惡意玩家
+                </p>
+                <p style="font-size:16px;">完成新手教程後一般可達 Tier 3～4。通過實戰考核可由教師評定。</p>
+            </div>
+            <div class="special-graphic">
+                <i class="fas fa-ranking-star"></i>
+            </div>
+        </div>
+
+        <!-- 考核方式卡片 -->
+        <div class="card-grid" style="margin-top:20px;">
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-clipboard-check"></i></div>
+                <h3>成果檢驗 Level 9</h3>
+                <p>✍️ 理論考核 (暫未開放)<br>🎮 實戰考核：發送單人/團戰重播給教師，或邀請教師即時觀戰。</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-people-group"></i></div>
+                <h3>社群活動 Level 10</h3>
+                <p>✅ 師徒制 · 小隊制 (8個分戰隊)<br>✅ 週末 Lobby2 內戰 · 1v1 尋戀擂台<br>✅ [CN] 大本營 (800+ 玩家)</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="fas fa-rocket"></i></div>
+                <h3>展望未來</h3>
+                <p>「山海遠闊，人間星河，你我頂峰見！」<br>—— 加入迎新群，開啟你的進階之路。</p>
+            </div>
+        </div>
+
+        <!-- 引用與感謝 -->
+        <div style="text-align:center; padding:40px 0 20px; color:#86868b; border-top:1px solid rgba(0,0,0,0.05);">
+            <p style="font-size: 18px;">教程編寫：RedactedRedacted · 修訂：iott, kafu · 特別感謝全體[CN]成員</p>
+            <p style="font-size: 15px;">本頁面濃縮自《Territorial.io新手教程.pdf》 (2026.01.15) · 保留所有權利</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Territorial.io [CN] 頂級極簡教程 · 完全版</p>
+        <p>基於 GSAP 與 ScrollTrigger 構建 · 響應式設計</p>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero 動畫
+        gsap.from("#hero-title", { opacity: 0, y: 80, duration: 2, ease: "power4.out" });
+        gsap.from("#hero-sub", { opacity: 0, y: 40, duration: 1.5, delay: 0.5, ease: "power3.out" });
+        gsap.to(".gradient-text", { backgroundPosition: "200% center", duration: 6, repeat: -1, ease: "linear" });
+
+        // 所有帶 .card 的元素交錯淡入
+        gsap.utils.toArray(".card").forEach((card, i) => {
+            gsap.to(card, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                delay: i * 0.15,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                }
+            });
+        });
+
+        // 表格區塊 (data-animate)
+        gsap.utils.toArray("[data-animate]").forEach(el => {
+            gsap.to(el, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                }
+            });
+        });
+
+        // 特殊區塊淡化 + 視差
+        gsap.utils.toArray(".special-block").forEach(block => {
+            gsap.from(block, {
+                opacity: 0,
+                y: 50,
+                duration: 1.2,
+                scrollTrigger: {
+                    trigger: block,
+                    start: "top 85%",
+                }
+            });
+        });
+
+        // section-header 淡入
+        gsap.utils.toArray(".section-header").forEach(header => {
+            gsap.to(header, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: header,
+                    start: "top 85%",
+                }
+            });
+        });
+    </script>
+</body>
+</html>
